@@ -19,3 +19,7 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 require("./models/User");
 require("./models/Task");
 
+const authRoutes = require("./routes/authRoutes");
+app.use("/auth", authRoutes);
+
+
