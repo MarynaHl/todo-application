@@ -1,37 +1,26 @@
 import { createContext, useState, useEffect } from "react";
-import API from "../api/axios";
+import axios from "../api/axios";
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await API.get("/auth/me");
-        setUser(res.data);
-      } catch {
-        setUser(null);
-      }
-    };
-    checkAuth();
-  }, []);
-
-  const login = async (credentials) => {
-    const res = await API.post("/auth/login", credentials);
-    localStorage.setItem("token", res.data.token);
-    setUser(res.data.user);
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    setUser(null);
+  const login = async (username, password) => {
+    try {
+      const res = await axios.post("/auth/login", { username, password });
+      localStorage.setItem("token", res.data.token);
+      setUser(username);
+    } catch (error) {
+      console.error("Login error:", error.response?.data?.message || error.message);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+export default AuthContext;
