@@ -22,4 +22,5 @@ require("./models/Task");
 const authRoutes = require("./routes/authRoutes");
 app.use("/auth", authRoutes);
 
-
+const taskRoutes = require("./routes/taskRoutes");
+app.use("/tasks", taskRoutes);
