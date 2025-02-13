@@ -1,45 +1,38 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
 import API from "../api/axios";
 import styled from "styled-components";
 
-export default function Home() {
+const Container = styled.div`
+  padding: 2rem;
+`;
+
+const Home = () => {
+  const { user } = useContext(AuthContext);
   const [tasks, setTasks] = useState([]);
-  const [error, setError] = useState("");
 
   useEffect(() => {
-    API.get("/tasks")
-      .then((response) => setTasks(response.data))
-      .catch((error) => {
-        console.error("Error fetching tasks:", error);
-        setError("Unauthorized. Please log in.");
-      });
+    const fetchTasks = async () => {
+      try {
+        const res = await API.get("/tasks");
+        setTasks(res.data);
+      } catch {
+        setTasks([]);
+      }
+    };
+    fetchTasks();
   }, []);
 
   return (
     <Container>
       <h1>ToDo Application</h1>
-      {error && <ErrorMessage>{error}</ErrorMessage>}
-      <ul>
-        {tasks.map((task) => (
-          <li key={task._id}>{task.title}</li>
-        ))}
-      </ul>
+      {user ? (
+        tasks.map((task) => <p key={task._id}>{task.title}</p>)
+      ) : (
+        <p>Please log in to see your tasks.</p>
+      )}
     </Container>
   );
-}
+};
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-size: 24px;
-  font-weight: bold;
-`;
-
-const ErrorMessage = styled.div`
-  color: red;
-  font-size: 18px;
-  margin-bottom: 10px;
-`;
+export default Home;
