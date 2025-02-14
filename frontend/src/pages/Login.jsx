@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import AuthContext from "../context/AuthContext";
 
 const Login = () => {
   const { login } = useContext(AuthContext);
@@ -8,25 +8,22 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login({ username, password });
+    if (!username || !password) {
+      alert("Please enter both username and password");
+      return;
+    }
+    await login(username, password);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button type="submit">Login</button>
-    </form>
+    <div>
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
+        <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <button type="submit">Login</button>
+      </form>
+    </div>
   );
 };
 
